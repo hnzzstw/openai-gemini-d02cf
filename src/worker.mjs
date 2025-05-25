@@ -661,6 +661,6 @@ async function handleDirectProxy(request, apiKey) {
     headers: makeHeaders(apiKey, { "Content-Type": "application/json" }),
     body
   });
-   console.log(response.body);
+  console.log('------reeuest end------');
   return new Response(response.body, fixCors(response));
 }
