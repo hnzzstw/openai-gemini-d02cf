@@ -31,6 +31,10 @@ export default {
           assert(request.method === "GET");
           return handleModels(apiKey)
             .catch(errHandler);
+        case pathname.includes("/models/") && pathname.includes(":generateContent"):
+          assert(request.method === "POST");
+          return handleDirectProxy(request, apiKey)
+            .catch(errHandler);
         default:
           throw new HttpError("404 Not Found", 404);
       }
@@ -644,4 +648,18 @@ function toOpenAiStreamFlush (controller) {
     }
     controller.enqueue("data: [DONE]" + delimiter);
   }
+}
+
+async function handleDirectProxy(request, apiKey) {
+  const { pathname } = new URL(request.url);
+  const url = `${BASE_URL}${pathname}`;
+  const body = await request.text();
+  
+  const response = await fetch(url, {
+    method: "POST",
+    headers: makeHeaders(apiKey, { "Content-Type": "application/json" }),
+    body
+  });
+
+  return new Response(response.body, fixCors(response));
 }
