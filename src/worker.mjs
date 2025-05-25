@@ -32,6 +32,7 @@ export default {
           return handleModels(apiKey)
             .catch(errHandler);
         case pathname.includes("/models/") && pathname.includes(":generateContent"):
+          console.log("handleDirectProxy");
           assert(request.method === "POST");
           return handleDirectProxy(request, apiKey)
             .catch(errHandler);
@@ -654,7 +655,7 @@ async function handleDirectProxy(request, apiKey) {
   const { pathname } = new URL(request.url);
   const url = `${BASE_URL}${pathname}`;
   const body = await request.text();
-  
+  console.log(body);
   const response = await fetch(url, {
     method: "POST",
     headers: makeHeaders(apiKey, { "Content-Type": "application/json" }),
